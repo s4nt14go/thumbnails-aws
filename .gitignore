@@ -1,0 +1,9 @@
+cmds.sh
+.idea
+resize/node_modules
+/run.sh
+/buildspec.yml
+/upload/.env
+/upload/node_modules/
+/resize/
+/.aws-sam/

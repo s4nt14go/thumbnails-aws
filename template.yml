@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Generate thumbnails
+Resources:
+
+  upload:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: ./upload
+      Handler: upload.handler
+      Runtime: nodejs12.x
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /presigned-url
+            Method: get
+            RestApiId: !Ref "uploadApi"
+  uploadApi:
+    Type: 'AWS::Serverless::Api'
+    Properties:
+      StageName: dev
+
+Outputs:
+  uploadApi:
+    Description: "Set this value in REACT_APP_GET_PRESIGNED_URL in the React app enviroment variable"
+    Value: !Sub 'https://${uploadApi}.execute-api.${AWS::Region}.amazonaws.com/dev/presigned-url?fileName'
+
+
+#  TimeFunction:
+#    Type: AWS::Serverless::Function
+#    Properties:
+#      Handler: index.handler
+#      Runtime: nodejs12.x
+#      CodeUri: ./
+#      Events:
+#        HttpRoot:
+#          Type: Api
+#          Properties:
+#            RestApiId: !Ref "MyApiName"
+#            Path: /TimeResource
+#            Method: GET
+
+#  MyApiName:
+#    Type: 'AWS::Serverless::Api'
+#    Properties:
+#      StageName: prod
+
+#Outputs:
+#  MyApiName:
+#    Description: "Go to this URL to get the time from the timezone put in index.js"
+#    Value: !Sub 'https://${MyApiName}.execute-api.${AWS::Region}.amazonaws.com/prod/TimeResource'
