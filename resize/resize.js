@@ -30,13 +30,14 @@ exports.handler = async (event, _context, _callback) => {
   }
 
   console.log('Download the image from the S3 source bucket');
+  let origimage;
   try {
     const params = {
       Bucket: srcBucket,
       Key: filename
     };
     console.log('s3.getObject', params);
-    const origimage = await s3.getObject(params).promise();
+    origimage = await s3.getObject(params).promise();
     console.log('origimage', origimage);
 
   } catch (error) {
@@ -66,13 +67,10 @@ exports.handler = async (event, _context, _callback) => {
       ContentType: "image"
     };
 
-    await s3.putObject(destparams).promise();
+    const putResult = await s3.putObject(destparams).promise();
 
-  } catch (error) {
-    console.log('s3.putObject error:', error);
-    return;
-  }
+    console.log('Successfully resized ' + srcBucket + '/' + filename +
+      ' and uploaded to ' + dstBucket + '/' + filename, putResult);
 
-  console.log('Successfully resized ' + srcBucket + '/' + filename +
-    ' and uploaded to ' + dstBucket + '/' + filename);
+  } catch (error) { return console.log('s3.putObject error:', error); }
 };
