@@ -17,16 +17,12 @@ exports.handler = async (event, _context, _callback) => {
   // Infer the image type from the file suffix.
   const typeMatch = filename.match(/\.([^.]*)$/);
   console.log('typeMatch', typeMatch);
-  if (!typeMatch) {
-    console.log("Could not determine the image type.");
-    return;
-  }
+  if (!typeMatch) { return console.log("Could not determine the image type."); }
 
   // Check that the image type is supported
   const imageType = typeMatch[1].toLowerCase();
   if (imageType !== "jpeg" && imageType !== "jpg" && imageType !== "png") {
-    console.log(`Unsupported image type: ${imageType}`);
-    return;
+    return console.log(`Unsupported image type: ${imageType}`);
   }
 
   console.log('Download the image from the S3 source bucket');
@@ -40,22 +36,17 @@ exports.handler = async (event, _context, _callback) => {
     origimage = await s3.getObject(params).promise();
     console.log('origimage', origimage);
 
-  } catch (error) {
-    return console.log('Download error:', error);
-  }
+  } catch (error) { return console.log('Download error:', error); }
 
   // set thumbnail width. Resize will set the height automatically to maintain aspect ratio.
   const width  = 200;
 
   // Use the Sharp module to resize the image and save in a buffer.
   console.log('Resize the image');
+  let buffer;
   try {
-    var buffer = await sharp(origimage.Body).resize(width).toBuffer();
-
-  } catch (error) {
-    console.log('Resize error:', error);
-    return;
-  }
+    buffer = await sharp(origimage.Body).resize(width).toBuffer();
+  } catch (error) { return console.log('Resize error:', error); }
 
   // Upload the thumbnail image to the destination bucket
   console.log('dstBucket', dstBucket);
