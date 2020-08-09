@@ -1,0 +1,14 @@
+{
+  "Records": [
+    {
+      "s3": {
+        "bucket": {
+          "name": "thumbnails-imagetoresize-1bnzvvg67m1ai"
+        },
+        "object": {
+          "key": "test.jpeg"
+        }
+      }
+    }
+  ]
+}

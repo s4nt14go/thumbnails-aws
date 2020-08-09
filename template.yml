@@ -9,44 +9,80 @@ Resources:
       CodeUri: ./upload
       Handler: upload.handler
       Runtime: nodejs12.x
+      Policies:
+        - AmazonS3FullAccess
       Events:
-        HelloWorld:
+        getPresigned:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /presigned-url
             Method: get
             RestApiId: !Ref "uploadApi"
   uploadApi:
-    Type: 'AWS::Serverless::Api'
+    Type: AWS::Serverless::Api
     Properties:
       StageName: dev
 
+  resize:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./resize
+      Handler: resize.handler
+      Runtime: nodejs12.x
+      Timeout: 10
+      MemorySize: 1024
+      Policies:
+        - AWSLambdaExecute
+      Events:
+        fileUpload:
+          Type: S3
+          Properties:
+            Bucket: !Ref imageToResize
+            Events: s3:ObjectCreated:*
+
+  imageToResize:
+    Type: AWS::S3::Bucket
+    Properties:
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+              - "*"
+            AllowedMethods:
+              - PUT
+            AllowedHeaders:
+              - "*"
+
+  imageResized:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${imageToResize}-resized'
+      AccessControl: PublicRead
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+              - "*"
+            AllowedMethods:
+              - GET
+            AllowedHeaders:
+              - "*"
+
+  imageResizedPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref imageResized
+      PolicyDocument:
+        Id: PublicReadPolicy
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Sub arn:aws:s3:::${imageResized}/*
+
 Outputs:
   uploadApi:
-    Description: "Set this value in REACT_APP_GET_PRESIGNED_URL in the React app enviroment variable"
+    Description: 'Set the following value in REACT_APP_GET_PRESIGNED_URL in the React app enviroment variable. Note: Pay attention if there is a line break introduced when printing out, the value you need ends with "url?filename"'
     Value: !Sub 'https://${uploadApi}.execute-api.${AWS::Region}.amazonaws.com/dev/presigned-url?fileName'
-
-
-#  TimeFunction:
-#    Type: AWS::Serverless::Function
-#    Properties:
-#      Handler: index.handler
-#      Runtime: nodejs12.x
-#      CodeUri: ./
-#      Events:
-#        HttpRoot:
-#          Type: Api
-#          Properties:
-#            RestApiId: !Ref "MyApiName"
-#            Path: /TimeResource
-#            Method: GET
-
-#  MyApiName:
-#    Type: 'AWS::Serverless::Api'
-#    Properties:
-#      StageName: prod
-
-#Outputs:
-#  MyApiName:
-#    Description: "Go to this URL to get the time from the timezone put in index.js"
-#    Value: !Sub 'https://${MyApiName}.execute-api.${AWS::Region}.amazonaws.com/prod/TimeResource'
+  imageToResize:
+    Description: 'Set the following value as an environment variable in a React app named REACT_APP_S3_BUCKET and in api/upload/.env named S3_BUCKET'
+    Value: !Sub '${imageToResize}'
