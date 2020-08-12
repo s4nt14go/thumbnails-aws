@@ -6,3 +6,4 @@ resize/node_modules
 /upload/.env
 /upload/node_modules/
 /.aws-sam/
+/resize/.env

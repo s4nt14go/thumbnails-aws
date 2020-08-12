@@ -1,11 +1,36 @@
+// region --------------------------------------------------- region Resize dependencies
 const AWS = require('aws-sdk');
 const util = require('util');
 const sharp = require('sharp');
+// endregion
 
+// region --------------------------------------------------- Write to AppSync dependencies
+require('dotenv').config();
+const appsync = require('aws-appsync');
+const gql = require('graphql-tag');
+require('cross-fetch/polyfill');
+// endregion
+
+// region --------------------------------------------------- Resize initialization
 const s3 = new AWS.S3();  // get reference to S3 client
+// enregion
 
-exports.handler = async (event, _context, _callback) => {
+// region --------------------------------------------------- Write to AppSync initialization
+console.log(process.env.APPSYNC_ENDPOINT_URL);
+const graphqlClient = new appsync.AWSAppSyncClient({
+  url: process.env.APPSYNC_ENDPOINT_URL,
+  region: process.env.AWS_REGION,
+  auth: {
+    type: 'API_KEY',
+    apiKey: process.env.APPSYNC_API_KEY,
+  },
+  disableOffline: true
+});
+// endregion
 
+exports.handler = async (event, _context, callback) => {
+
+  // region --------------------------------------------------- Resize
   // Read options from the event parameter.
   console.log("Reading options from event:\n", util.inspect(event, {depth: 5}));
   const srcBucket = event.Records[0].s3.bucket.name;
@@ -64,4 +89,39 @@ exports.handler = async (event, _context, _callback) => {
       ' and uploaded to ' + dstBucket + '/' + filename, putResult);
 
   } catch (error) { return console.log('s3.putObject error:', error); }
+  // endregion
+
+  // region --------------------------------------------------- Write to AppSync
+  async function mutate() {
+    const mutation = gql`mutation CreateUrl(
+      $input: CreateResizedUrlInput!
+    ) {
+      createResizedUrl(input: $input) {
+        id
+        url
+      }
+    }`;
+
+    console.log(graphqlClient);
+
+    const response = await graphqlClient.mutate({
+      mutation,
+      variables: {
+        input: {
+          url: `https://${dstBucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${filename}`,
+        }
+      }
+    });
+
+    console.log('response', response);
+  }
+
+  mutate();
+  // endregion
+
+  callback(null, {
+    statusCode: '200',
+    body: `Resized and mutated to AppSync successfully!!`,
+  });
+
 };
