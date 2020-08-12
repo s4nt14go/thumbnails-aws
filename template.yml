@@ -81,8 +81,8 @@ Resources:
 
 Outputs:
   uploadApi:
-    Description: 'Set the following value in REACT_APP_GET_PRESIGNED_URL in the React app enviroment variable. Note: Pay attention if there is a line break introduced when printing out, the value you need ends with "url?filename"'
+    Description: 'Set this value in REACT_APP_GET_PRESIGNED_URL in the React app enviroment variable'
     Value: !Sub 'https://${uploadApi}.execute-api.${AWS::Region}.amazonaws.com/dev/presigned-url?fileName'
   imageToResize:
-    Description: 'Set the following value as an environment variable in a React app named REACT_APP_S3_BUCKET and in api/upload/.env named S3_BUCKET'
+    Description: 'Set this value as REACT_APP_S3_BUCKET environment variable in the React app and in api/upload/.env named it S3_BUCKET'
     Value: !Sub '${imageToResize}'
