@@ -30,6 +30,8 @@ Use your browser to log into your AWS console and create a new AppSync API (chec
 ![alt text](./appsyncCreation/04apiName.png "Name API")<br /><br />
 This will create the DynamoDB table as well as our GraphQL schema and resolvers. Go into your new API created and take note of the API URL endpoint and API KEY<br /><br />
 ![alt text](./appsyncCreation/05settings.png "API endpoint and key")<br /><br />
+Inside Settings download the `schema.json` that we will need in the frontend<br /><br />
+![alt text](./appsyncCreation/06schema.png "Download schema.json")<br /><br />
 Now we will continue to deploy the rest of our infrastructure with Serverless Application Model (SAM)
 
 1. Clone this repo<br /><br />
