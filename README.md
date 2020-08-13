@@ -1,4 +1,4 @@
-<h1 align="center">Thumbnails generator using AWS Lambda, API Gateway, AppSync, DynamoDB, S3 and SAM 📢</h1>
+<h1 align="center">Thumbnails generator with AWS Lambda, API Gateway, AppSync, DynamoDB, S3 and SAM 📢</h1>
 <p>
   <img alt="Version" src="https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000" />
   <a href="#" target="_blank">
@@ -8,11 +8,12 @@
 
 ### Description
 
-Build a page with a drag and drop area in which you will be able to generate a thumbnail version of your jpg/jpeg/png files.
+Build a page with a drag and drop area in which you will be able to generate a 200px thumbnail version of your jpg/jpeg/png files.<br /><br />
+![alt text](./demo.gif)
 
-### Backend part
+### Frontend part
 
-This project is composed by two repositories: this one which is the api backend and this [React frontend](TODO*****https://aws.amazon.com******) is the other. Start with this repository and then continue with frontend.
+This project is composed by two repositories: this one which is the api backend and this [React frontend](https://github.com/s4nt14go/thumbnails-react) is the other. Start with this repository and then continue with frontend.
 
 ### Requirements:
 * [AWS account](https://aws.amazon.com)
@@ -32,7 +33,7 @@ This will create the DynamoDB table as well as our GraphQL schema and resolvers.
 Now we will continue to deploy the rest of our infrastructure with Serverless Application Model (SAM)
 
 1. Clone this repo<br /><br />
-`git clone TODO*****https://github.com/s4nt14go/helloSam.git*******`
+`git clone https://github.com/s4nt14go/thumbnails-aws`
 1. Check your are using your AWS credentials and the region you want<br /><br />
 `aws configure list`
 1. We will first build the project locally and then deploy it, so `cd` into the repo root folder and run<br /><br />
@@ -60,4 +61,4 @@ If everything went well you should receive a link to upload the image specified 
 So to check that lambda `resized` works well, we can upload an image to the bucket and we should see the `resize` logs printing `Resized and mutated to AppSync successfully!!`.<br /><br />
 So let's copy an image to S3, using the value outputted by CloudFormation when created bucket `imageToResize` and check it shows the expected successful message<br /><br />
 `aws s3 cp resize/test.jpeg s3://<imageToResize bucket name output by CloudFormation>/test.jpeg`<br />
-1. Now that everything works well go ahead with the [React client](*****TODO*https://momentjs.com/timezone******)!
+1. If you would like to remove the images Now that everything works well go ahead with the [React client](https://github.com/s4nt14go/thumbnails-react)!
