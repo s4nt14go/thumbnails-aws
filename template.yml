@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
 Description: Generate thumbnails
 Resources:
@@ -17,7 +17,10 @@ Resources:
           Properties:
             Path: /presigned-url
             Method: get
-            RestApiId: !Ref "uploadApi"
+            RestApiId: !Ref uploadApi
+      Environment:
+        Variables:
+          S3_BUCKET: !Ref imageToResize
   uploadApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -46,25 +49,25 @@ Resources:
       CorsConfiguration:
         CorsRules:
           - AllowedOrigins:
-              - "*"
+              - '*'
             AllowedMethods:
               - PUT
             AllowedHeaders:
-              - "*"
+              - '*'
 
   imageResized:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub '${imageToResize}-resized'
+      BucketName: !Sub ${imageToResize}-resized
       AccessControl: PublicRead
       CorsConfiguration:
         CorsRules:
           - AllowedOrigins:
-              - "*"
+              - '*'
             AllowedMethods:
               - GET
             AllowedHeaders:
-              - "*"
+              - '*'
 
   imageResizedPolicy:
     Type: AWS::S3::BucketPolicy
@@ -76,13 +79,13 @@ Resources:
         Statement:
           - Effect: Allow
             Principal: '*'
-            Action: 's3:GetObject'
+            Action: s3:GetObject
             Resource: !Sub arn:aws:s3:::${imageResized}/*
 
 Outputs:
   uploadApi:
-    Description: 'Set this value in REACT_APP_GET_PRESIGNED_URL in the React app enviroment variable'
-    Value: !Sub 'https://${uploadApi}.execute-api.${AWS::Region}.amazonaws.com/dev/presigned-url?fileName'
+    Description: Set this value in REACT_APP_GET_PRESIGNED_URL in the React app enviroment variable
+    Value: !Sub https://${uploadApi}.execute-api.${AWS::Region}.amazonaws.com/dev/presigned-url?fileName
   imageToResize:
-    Description: 'Set this value as REACT_APP_S3_BUCKET environment variable in the React app and in api/upload/.env named it S3_BUCKET'
-    Value: !Sub '${imageToResize}'
+    Description: Set this value as REACT_APP_S3_BUCKET environment variable in the React app
+    Value: !Sub ${imageToResize}

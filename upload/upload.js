@@ -11,7 +11,7 @@ exports.handler = async (event, _context) => {
   const key = event.queryStringParameters.fileName;   // Reading the file name from the request.
 
   try {
-    console.log(process.env.S3_BUCKET);
+    console.log('S3_BUCKET', process.env.S3_BUCKET);
     const params = {    // Params object for creating the
       Bucket: process.env.S3_BUCKET,
       Key: key,
