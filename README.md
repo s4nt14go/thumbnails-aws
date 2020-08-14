@@ -54,17 +54,18 @@ One of the lambdas deployed is `upload` that we will use from the React app to g
 Once CloudFormation ends deploying our `template.yml` it will output two values we will need for the frontend:
  - `uploadApi`: the url from where we will get an url to upload our images
  - `imageToResize`: the bucket name where we will upload the images
-1. Let's check the lambda function `upload`<br /><br />
-`curl --request GET --url "<uploadApi output by CloudFormation>=test.txt"`<br /><br />
-If everything went well you should receive a link to upload the image specified in `upload/event.json`
-
-1. Every time an image is uploaded to bucket `imageToResize`, lambda function `resize` will run and resize it, and also will launch a mutation to AppSync, so the React app (that will be subscribed to receive real-time changes) will pick up the change and show the resized image.<br /><br />
-So to check that lambda `resized` works well, we can upload an image to the bucket and we should see the `resize` logs printing `Resized and mutated to AppSync successfully!!`.<br /><br />
-So let's copy an image to S3, using the value outputted by CloudFormation when created bucket `imageToResize`<br /><br />
- `aws s3 cp resize/test.jpeg s3://<imageToResize bucket name output by CloudFormation>/test.jpeg`<br /><br />
-Check inside Lambda console the `thumbnails-resize...` function, click in the "Monitoring" tab and then the "View logs in CloudWatch" button, select the most recent log group and you should see the successful message<br /><br />
-
-1. Now that everything works well go ahead with the [React client](https://github.com/s4nt14go/thumbnails-react)!
+ 
+    1. Let's check the lambda function `upload`<br /><br />
+    `curl --request GET --url "<uploadApi output by CloudFormation>=test.txt"`<br /><br />
+    If everything went well you should receive a link to upload the image specified in `upload/event.json`
+    
+    1. Every time an image is uploaded to bucket `imageToResize`, lambda function `resize` will run and resize it, and also will launch a mutation to AppSync, so the React app (that will be subscribed to receive real-time changes) will pick up the change and show the resized image.<br /><br />
+    So to check that lambda `resized` works well, we can upload an image to the bucket and we should see the `resize` logs printing `Resized and mutated to AppSync successfully!!`.<br /><br />
+    So let's copy an image to S3, using the value outputted by CloudFormation when created bucket `imageToResize`<br /><br />
+     `aws s3 cp resize/test.jpeg s3://<imageToResize bucket name output by CloudFormation>/test.jpeg`<br /><br />
+    Check inside Lambda console the `thumbnails-resize...` function, click in the "Monitoring" tab and then the "View logs in CloudWatch" button, select the most recent log group and you should see the successful message<br /><br />
+    
+    1. Now that everything works well go ahead with the [React client](https://github.com/s4nt14go/thumbnails-react)!
 
 ### Cleanup
 After you do the frontend part and you are done with the project do this to delete the created resources 
