@@ -25,7 +25,7 @@ This project is composed by two repositories: this one which is the api backend 
 1. In this first step we will use the AWS console to setup AppSync, which under the hoods will deploy a DynamoDB table. AppSync is the managed GraphQL service which will handle our database operations, that will contain the urls for the images resized, as well as gives us real-time updates sent to our frontend.<br /><br />
 Use your browser to log into your AWS console and create a new AppSync API (check you create it into the AWS region you will be working on this project):<br /><br />
 ![alt text](./imgs/1.1createAPI.png "Create API")<br /><br />
-![alt text](./imgs/1.2startWizard.png "Start wizard")<br />
+![alt text](./imgs/1.2startWizard.png "Start wizard")<br /><br />
 Make sure you use `ResizedUrl` as your model name as this is the name used in the lambda function we will create<br /><br />
 ![alt text](./imgs/1.3createModel.png "Create model")<br /><br /> 
 ![alt text](./imgs/1.4apiName.png "Name API")<br /><br />
