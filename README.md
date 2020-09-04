@@ -59,7 +59,7 @@ If everything went well you should receive a link to upload the fictitious file 
 So to check that lambda `resized` works well, we can upload an image to the bucket and we should see the `resize` logs printing `Successfully resized <your image> and uploaded to <your bucket>` along with the `AppSync response`.<br /><br />
 So let's copy an image to S3, using the value outputted by CloudFormation when created bucket `imageToResize`<br /><br />
 `aws s3 cp resize/test.jpeg s3://<imageToResize bucket name output by CloudFormation>/test.jpeg`<br /><br />
-Check inside Lambda console the `thumbnails-resize...` function, click in the "Monitoring" tab and then the "View logs in CloudWatch" button, select the most recent "Log stream" and you should see the successful message<br /><br />    
+Check inside Lambda console the `thumbnails-resize...` function, click in the "Monitoring" tab and then the "View logs in CloudWatch" button, select the most recent "Log stream" and you should see the successful message. You can also check in your S3 bucket `<imageToResize>-resized` the thumbnail created<br /><br />    
 1. Now that everything works well go ahead with the [React client](https://github.com/s4nt14go/thumbnails-react)!
 
 ### Cleanup
