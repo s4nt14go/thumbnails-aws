@@ -16,7 +16,9 @@ const s3 = new AWS.S3();  // get reference to S3 client
 // enregion
 
 // region --------------------------------------------------- Write to AppSync initialization
-console.log(process.env.APPSYNC_ENDPOINT_URL);
+console.log('APPSYNC_ENDPOINT_URL', process.env.APPSYNC_ENDPOINT_URL);
+console.log('AWS_REGION', process.env.AWS_REGION);
+console.log('APPSYNC_API_KEY', process.env.APPSYNC_API_KEY);
 const graphqlClient = new appsync.AWSAppSyncClient({
   url: process.env.APPSYNC_ENDPOINT_URL,
   region: process.env.AWS_REGION,
