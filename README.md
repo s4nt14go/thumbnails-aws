@@ -24,14 +24,15 @@ This project is composed by two repositories: this one which is the api backend 
 
 1. In this first step we will use the AWS console to setup AppSync, which under the hoods will deploy a DynamoDB table. AppSync is the managed GraphQL service which will handle our database operations, that will contain the urls for the images resized, as well as gives us real-time updates sent to our frontend.<br /><br />
 Use your browser to log into your AWS console and create a new AppSync API (check you create it into the AWS region you will be working on this project):<br /><br />
-![alt text](./imgs/01createAPI.png "Create API")<br /><br />
-![alt text](./imgs/02startWizard.png "Start wizard")<br /><br />
-![alt text](./imgs/03createModel.png "Create model")<br /><br />
-![alt text](./imgs/04apiName.png "Name API")<br /><br />
+![alt text](./imgs/1.1createAPI.png "Create API")<br /><br />
+![alt text](./imgs/1.2startWizard.png "Start wizard")<br />
+Make sure you use `ResizedUrl` as your model name as this is the name used in the lambda function we will create<br /><br />
+![alt text](./imgs/1.3createModel.png "Create model")<br /><br /> 
+![alt text](./imgs/1.4apiName.png "Name API")<br /><br />
 This will create the DynamoDB table as well as our GraphQL schema and resolvers. Go into your new API created and take note of the API URL endpoint and API KEY<br /><br />
-![alt text](./imgs/05settings.png "API endpoint and key")<br /><br />
+![alt text](./imgs/1.5settings.png "API endpoint and key")<br /><br />
 Inside Schema download the `schema.json` that we will need in the frontend<br /><br />
-![alt text](./imgs/06schema.png "Download schema.json")<br /><br />
+![alt text](./imgs/1.6schema.png "Download schema.json")<br /><br />
 Now we will continue to deploy the rest of our infrastructure with Serverless Application Model (SAM)
 
 1. Clone this repo<br /><br />
@@ -54,16 +55,17 @@ One of the lambdas deployed is `upload` that we will use from the React app to g
 Once CloudFormation ends deploying our `template.yml` it will output two values we will need for the frontend:
     - `uploadApi`: the url from where we will get an url to upload our images
     - `imageToResize`: the bucket name where we will upload the images
-1. Go into the `resize` lambda inside your AWS console and set the environment variables as you did in the `.env` file<br /><br />
-![alt text](./imgs/envVars.png "Name API")<br /><br />
-1. Let's check the lambda function `upload`<br /><br />
+1. Go into the `resize` lambda inside your AWS console and set the environment variables `APPSYNC_ENDPOINT_URL` and `APPSYNC_API_KEY` as you did in the `.env` file (you don't need to set `AWS_REGION` as this is automatically injected in lambdas)<br /><br />
+![alt text](./imgs/2.1envVars.png "Evironment variables")<br /><br />
+![alt text](./imgs/2.2edit.png "Evironment variables")<br /><br />
+1. Let's check the lambda function `upload`. TIP: When you copy the `uploadApi` output by CloudFormation, check it didn't get break out in two lines by your terminal output, the url should end in `amazonaws.com/dev/presigned-url?fileName`<br /><br />
 `curl --request GET --url "<uploadApi output by CloudFormation>=test.txt"`<br /><br />
-If everything went well you should receive a link to upload the image specified in `upload/event.json`    
+If everything went well you should receive a link to upload the fictitious file `text.txt`.    
 1. Every time an image is uploaded to bucket `imageToResize`, lambda function `resize` will run and resize it, and also will launch a mutation to AppSync, so the React app (that will be subscribed to receive real-time changes) will pick up the change and show the resized image.<br /><br />
 So to check that lambda `resized` works well, we can upload an image to the bucket and we should see the `resize` logs printing `Resized and mutated to AppSync successfully!!`.<br /><br />
 So let's copy an image to S3, using the value outputted by CloudFormation when created bucket `imageToResize`<br /><br />
 `aws s3 cp resize/test.jpeg s3://<imageToResize bucket name output by CloudFormation>/test.jpeg`<br /><br />
-Check inside Lambda console the `thumbnails-resize...` function, click in the "Monitoring" tab and then the "View logs in CloudWatch" button, select the most recent log group and you should see the successful message<br /><br />    
+Check inside Lambda console the `thumbnails-resize...` function, click in the "Monitoring" tab and then the "View logs in CloudWatch" button, select the most recent "Log stream" and you should see the successful message<br /><br />    
 1. Now that everything works well go ahead with the [React client](https://github.com/s4nt14go/thumbnails-react)!
 
 ### Cleanup
@@ -77,4 +79,5 @@ After you do the frontend part and you are done with the project do this to dele
 1. Empty and delete the bucket used by CloudFormation to deploy<br /><br />
 `aws s3 rm s3://<your stack-thumbnails-artifacts> --recursive`<br />
 `aws s3 rb s3://<your stack-thumbnails-artifacts>`<br /><br />
-1. Go into the AppSync console and delete the created API
+1. Delete AppSync API<br /><br />
+`aws appsync delete-graphql-api --api-id <your api id>`
