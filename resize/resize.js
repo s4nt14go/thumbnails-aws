@@ -104,7 +104,7 @@ exports.handler = async (event, _context, callback) => {
       }
     }`;
 
-    console.log(graphqlClient);
+    console.log('graphqlClient', graphqlClient);
 
     const response = await graphqlClient.mutate({
       mutation,
@@ -115,7 +115,7 @@ exports.handler = async (event, _context, callback) => {
       }
     });
 
-    console.log('response', response);
+    console.log('AppSync response', response);
   }
 
   mutate();
