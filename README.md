@@ -54,7 +54,7 @@ Once CloudFormation finishes deploying our `template.yml` it will output two val
 ![alt text](./imgs/2.2edit.png "Evironment variables")<br /><br />
 1. Let's check the lambda function `upload`.<br /><br />
 `curl --request GET --url "<uploadApi output by CloudFormation>=test.txt"`<br /><br />
-TIP: When you copy the `uploadApi` output by CloudFormation, check it didn't get break out in two lines by your terminal output, the url should end in `amazonaws.com/dev/presigned-url?fileName`<br /><br />
+TIP: When you copy the `uploadApi` output by CloudFormation, check it didn't get break out in two lines by your terminal output, the url should end with `amazonaws.com/dev/presigned-url?fileName`<br /><br />
 If everything went well you should receive a link to upload the fictitious file `text.txt`.    
 1. Every time an image is uploaded to bucket `imageToResize`, lambda function `resize` will run and resize it, and also will launch a mutation to AppSync, so the React app (that will be subscribed to receive real-time changes) will pick up the change and show the resized image.<br /><br />
 So to check that lambda `resized` works well, we can upload an image to the bucket and we should see the `resize` logs printing `Successfully resized <your image> and uploaded to <your bucket>` along with the `AppSync response`.<br /><br />
